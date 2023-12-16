@@ -26,6 +26,7 @@ addLayer("main", {
         if (hasMilestone('shadow', 0)) mult = mult.mul(10)
         if (hasMilestone('shadow', 1)) mult = mult.pow(1.5)
         if (hasMilestone('shadow', 2)) mult = mult.mul(20)
+        if (hasMilestone('shadow', 3)) mult = mult.pow(2)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -224,6 +225,7 @@ addLayer("shadow", {
   gainMult() { // Calculate the multiplier for main currency from bonuses
       mult = new Decimal(1)
       if (hasUpgrade('main', 21)) mult = mult.mul(2)
+      if (hasMilestone('shadow', 3)) mult = mult.mul(2)
       return mult
   },
 
@@ -246,9 +248,17 @@ addLayer("shadow", {
 
     2: {
       requirementDescription: "Get 50 shadows",
-      effectDescription: "x20 ether gain and unlock 3 more upgrades",
+      effectDescription: "x20 ether gain",
       done() {
         return player.shadow.points.gte(50)
+      }
+    },
+
+    3: {
+      requirementDescription: "Get 500 shadows",
+      effectDescription: "^2 ether gain and 2x shadow gain",
+      done() {
+        return player.shadow.points.gte(500)
       }
     },
     
