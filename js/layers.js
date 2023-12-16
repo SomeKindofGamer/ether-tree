@@ -21,6 +21,11 @@ addLayer("main", {
         if (hasUpgrade('main', 13)) mult = mult.pow(1.1)
         if (hasUpgrade('main', 14)) mult = mult.pow(1.25)
         if (hasUpgrade('main', 15)) mult = mult.pow(1.4)
+        if (hasUpgrade('main', 18)) mult = mult.pow(1.65)
+        if (hasUpgrade('main', 19)) mult = mult.pow(1.85)
+        if (hasMilestone('shadow', 0)) mult = mult.mul(10)
+        if (hasMilestone('shadow', 1)) mult = mult.pow(1.5)
+        if (hasMilestone('shadow', 2)) mult = mult.mul(20)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -64,6 +69,51 @@ addLayer("main", {
           description: "Add ^0.4 to your Ether gain",
           cost: new Decimal(1e12),
         },
+
+        16: {
+          title: "Point Generator v2",
+          description: "Add ^0.2 to your Point gain",
+          cost: new Decimal(1e100),
+        },
+
+        17: {
+          title: "MORE BUYABLES!!!",
+          description: "Adds 200 to the buyable limit (1000)",
+          cost: new Decimal(1e250),
+        },
+
+        18: {
+          title: "Ether Generator v5",
+          description: "Add ^0.65 to your Ether gain",
+          cost: new Decimal(1e295),
+        },
+
+        19: {
+          title: "Ether Generator MKII",
+          description: "Add ^0.85 to your Ether gain",
+          cost: new Decimal("1e600"),
+          unlocked() {
+            if (hasMilestone('shadow', 1)) return true
+          }
+        },
+
+        20: {
+          title: "EVEN MORE BUYABLES!!!",
+          description: "Adds 250 to the buyable limit (1250)",
+          cost: new Decimal("1e775"),
+          unlocked() {
+            if (hasMilestone('shadow', 1)) return true
+          }
+        },
+
+        21: {
+          title: "Darkness Lightraiser",
+          description: "Earn 2x more shadow",
+          cost: new Decimal("1e850"),
+          unlocked() {
+            if (hasMilestone('shadow', 1)) return true
+          }
+        },
       },
 
       buyables: {
@@ -80,7 +130,10 @@ addLayer("main", {
     <h1>Cost: ${format(tmp[this.layer].buyables[this.id].cost)} Ether</h1>`
       },
       purchaseLimit() {
-        return 800
+        let LimitThing = new Decimal(800)
+        if (hasUpgrade('main', 17)) LimitThing = LimitThing.add(200)
+        if (hasUpgrade('main', 20)) LimitThing = LimitThing.add(250)
+        return LimitThing
       },
       canAfford() {
         return player[this.layer].points.gte(this.cost())
@@ -113,7 +166,10 @@ addLayer("main", {
         return player[this.layer].points.gte(this.cost())
       },
       purchaseLimit() {
-        return 800
+        let LimitThing = new Decimal(800)
+        if (hasUpgrade('main', 17)) LimitThing = LimitThing.add(200)
+        if (hasUpgrade('main', 20)) LimitThing = LimitThing.add(250)
+        return LimitThing
       },
       buy() {
         player[this.layer].points = player[this.layer].points.sub(this.cost())
@@ -133,7 +189,20 @@ addLayer("main", {
     hotkeys: [
       //  {key: "p", description: "P: Reset for prestige points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown(){return true}
+    layerShown(){return true},
+
+    tabFormat: {
+      "main tab": {
+        content:
+        ["main-display",
+        "resource-display",
+        "blank", 
+        "buyables", 
+        "blank", 
+        "upgrades",]
+  
+      }
+    }
 })
 
 addLayer("shadow", {
@@ -145,15 +214,16 @@ addLayer("shadow", {
   points: new Decimal(0), // Currency
 
   }},
-  color: "#6A0DAD",
+  color: "#323232",
   requires: new Decimal(5e257), // Can be a function that takes requirement increases into account
   resource: "shadow", // Name of prestige currency
   baseResource: "ether", // Name of resource prestige is based on
   baseAmount() {return player.main.points}, // Get the current amount of baseResource
   type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-  exponent: 0.5, // Prestige currency exponent
+  exponent: 0.0015, // Prestige currency exponent
   gainMult() { // Calculate the multiplier for main currency from bonuses
       mult = new Decimal(1)
+      if (hasUpgrade('main', 21)) mult = mult.mul(2)
       return mult
   },
 
@@ -165,24 +235,42 @@ addLayer("shadow", {
         return player.shadow.points.gte(1)
       }
     },
+
+    1: {
+      requirementDescription: "Get 3 shadows",
+      effectDescription: "^1.5 ether gain and unlock 3 more upgrades",
+      done() {
+        return player.shadow.points.gte(3)
+      }
+    },
+
+    2: {
+      requirementDescription: "Get 50 shadows",
+      effectDescription: "x20 ether gain and unlock 3 more upgrades",
+      done() {
+        return player.shadow.points.gte(50)
+      }
+    },
     
   },
 
   row: 1, // Row the layer is in on the tree (0 is the first row)
   layerShown(){return hasAchievement("a", 25)},
 
-  tabFormat: [
-    "main-display",
-    ["prestige-button", function() { return "Sacrifice your ether into " }],
-    "blank",
-    "resource-display",
-    "blank",
-    ["toggle", ["c", "beep"]],
-    "milestones",
-    "blank",
-    "blank",
-    "upgrades"
-]
+  tabFormat: {
+    "main tab": {
+      content:
+      ["main-display",
+      "resource-display",
+      ["prestige-button", "", {'width': '250px', 'height': '150px'}], 
+      "blank", 
+      "milestones", 
+      "blank", 
+      "upgrades",]
+
+    }
+  }
+
 })
 
 addLayer("a", {
@@ -303,6 +391,71 @@ points: new Decimal(0),
   onComplete() {player.a.points = player.a.points.add(1)}
 },
 
+26: {
+  name: "I still love ether!",
+  done() {return player.main.points.gte(1e285)},
+  tooltip: "Get 1e285 ether", // Showed when the achievement is completed
+  onComplete() {player.a.points = player.a.points.add(1)}
+},
+
+27: {
+  name: "I still really love ether!",
+  done() {return player.main.points.gte("1e325")},
+  tooltip: "Get 1e325 ether", // Showed when the achievement is completed
+  onComplete() {player.a.points = player.a.points.add(1)}
+},
+
+28: {
+  name: "cool",
+  done() {return player.main.points.gte("1e385")},
+  tooltip: "Get 1e385 ether", // Showed when the achievement is completed
+  onComplete() {player.a.points = player.a.points.add(1)}
+},
+
+29: {
+  name: "you must be dedicated to ether",
+  done() {return player.main.points.gte("1e420")},
+  tooltip: "Get 1e420 ether", // Showed when the achievement is completed
+  onComplete() {player.a.points = player.a.points.add(1)}
+},
+
+30: {
+  name: "1e500 ether speedrun",
+  done() {return player.main.points.gte("1e500")},
+  tooltip: "Get 1e500 ether", // Showed when the achievement is completed
+  onComplete() {player.a.points = player.a.points.add(1)}
+},
+
+31: {
+  name: "Ether Champion",
+  done() {return player.main.points.gte("1e650")},
+  tooltip: "Get 1e650 ether", // Showed when the achievement is completed
+  onComplete() {player.a.points = player.a.points.add(1)}
+},
+
+32: {
+  name: "this is alot of ether",
+  done() {return player.main.points.gte("1e900")},
+  tooltip: "Get 1e900 ether", // Showed when the achievement is completed
+  onComplete() {player.a.points = player.a.points.add(1)}
+},
+
+33: {
+  name: "this is REALLY alot of ether",
+  done() {return player.main.points.gte("1e1200")},
+  tooltip: "Get 1e1200 ether", // Showed when the achievement is completed
+  onComplete() {player.a.points = player.a.points.add(1)}
+},
+
+34: {
+  name: "this is EXTREMELY alot of ether",
+  done() {return player.main.points.gte("1e1500")},
+  tooltip: "Get 1e1500 ether", // Showed when the achievement is completed
+  onComplete() {player.a.points = player.a.points.add(1)}
+},
+
+//      --------      Shadow Achievements      --------      \\
+
 ["S1"]: {
   name: "i love shadow",
   done() {return player.shadow.points.gte(1)},
@@ -319,17 +472,46 @@ points: new Decimal(0),
 
 ["S3"]: {
   name: "yum give me more",
-  done() {return player.shadow.points.gte(6)},
-  tooltip: "Get 6 shadows", // Showed when the achievement is completed
+  done() {return player.shadow.points.gte(25)},
+  tooltip: "Get 25 shadows", // Showed when the achievement is completed
   onComplete() {player.a.points = player.a.points.add(1)}
 },
 
 ["S4"]: {
   name: "so many shadows",
-  done() {return player.shadow.points.gte(15)},
-  tooltip: "Get 15 shadows", // Showed when the achievement is completed
+  done() {return player.shadow.points.gte(750)},
+  tooltip: "Get 750 shadows", // Showed when the achievement is completed
   onComplete() {player.a.points = player.a.points.add(1)}
 },
+
+["S5"]: {
+  name: "yummy shadows",
+  done() {return player.shadow.points.gte(5000)},
+  tooltip: "Get 5,000 shadows", // Showed when the achievement is completed
+  onComplete() {player.a.points = player.a.points.add(1)}
+},
+
+["S6"]: {
+  name: "tasty shadows",
+  done() {return player.shadow.points.gte(20000)},
+  tooltip: "Get 200,000 shadows", // Showed when the achievement is completed
+  onComplete() {player.a.points = player.a.points.add(1)}
+},
+
+["S7"]: {
+  name: "These are easy shadows",
+  done() {return player.shadow.points.gte(1000000)},
+  tooltip: "Get 1,000,000 shadows", // Showed when the achievement is completed
+  onComplete() {player.a.points = player.a.points.add(1)}
+},
+
+["S8"]: {
+  name: "Shadow God",
+  done() {return player.shadow.points.gte(1_000_000_000)},
+  tooltip: "Get 1,000,000,000 shadows", // Showed when the achievement is completed
+  onComplete() {player.a.points = player.a.points.add(1)}
+},
+
 
 
   },
@@ -343,13 +525,16 @@ points: new Decimal(0),
        ["row", [["achievement", 11], ["achievement", 12], ["achievement", 13], ["achievement", 14]]],
        ["row", [["achievement", 15], ["achievement", 16], ["achievement", 17], ["achievement", 18]]],
        ["row", [["achievement", 19], ["achievement", 20], ["achievement", 21], ["achievement", 22]]],
-       ["row", [["achievement", 23], ["achievement", 24], ["achievement", 25]]],
+       ["row", [["achievement", 23], ["achievement", 24], ["achievement", 25], ["achievement", 26]]],
+       ["row", [["achievement", 27], ["achievement", 28], ["achievement", 29], ["achievement", 30]]],
+       ["row", [["achievement", 31], ["achievement", 32], ["achievement", 33], ["achievement", 34]]],
        "blank",
        "blank",
 
        ["display-text", function() { return "Shadow Achievements"}],
     "blank",
        ["row", [["achievement", "S1"], ["achievement", "S2"], ["achievement", "S3"], ["achievement", "S4"]]],
+       ["row", [["achievement", "S5"], ["achievement", "S6"], ["achievement", "S7"], ["achievement", "S8"]]],
        "blank",
        "blank",
 ],

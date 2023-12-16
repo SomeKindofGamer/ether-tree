@@ -13,7 +13,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0.1",
+	num: "1.0.0",
 	name: "Ethereal Tree",
 }
 
@@ -45,6 +45,7 @@ function getPointGen() {
 
 		gain = gain.mul(buyableEffect('main', 11))
 		if (hasUpgrade('main', 11)) gain = gain.times(2)
+		if (hasUpgrade('main', 16)) gain = gain.pow(1.2)
 		
 	return gain
 }
