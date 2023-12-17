@@ -24,9 +24,9 @@ addLayer("main", {
         if (hasUpgrade('main', 18)) mult = mult.pow(1.65)
         if (hasUpgrade('main', 19)) mult = mult.pow(1.85)
         if (hasMilestone('shadow', 0)) mult = mult.mul(10)
-        if (hasMilestone('shadow', 1)) mult = mult.pow(1.25)
+        if (hasMilestone('shadow', 1)) mult = mult.pow(1.4)
         if (hasMilestone('shadow', 2)) mult = mult.mul(20)
-        if (hasMilestone('shadow', 3)) mult = mult.pow(1.5)
+        if (hasMilestone('shadow', 3)) mult = mult.pow(1.8)
         if (hasMilestone('shadow', 4)) mult = mult.mul(35)
         if (hasUpgrade('shadow', 15)) mult = mult.mul(300)
         return mult
@@ -368,7 +368,7 @@ addLayer("shadow", {
 
     1: {
       requirementDescription: "Get 3 shadows",
-      effectDescription: "^1.25 ether gain and unlock 3 more ether upgrades",
+      effectDescription: "^1.4 ether gain and unlock 3 more ether upgrades",
       done() {
         return player.shadow.points.gte(3)
       }
@@ -384,7 +384,7 @@ addLayer("shadow", {
 
     3: {
       requirementDescription: "Get 500 shadows",
-      effectDescription: "^1.5 ether gain and 2x shadow gain",
+      effectDescription: "^1.8 ether gain and 2x shadow gain",
       done() {
         return player.shadow.points.gte(500)
       }
