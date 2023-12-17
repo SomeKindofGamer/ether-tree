@@ -42,6 +42,10 @@ td {
 	margin: 0 auto;
 }
 
+.upgAlign.with-margin {
+    margin: 5px; /* Adjust the margin value according to your preference */
+}
+
 .upgAlign {
 	vertical-align: 0
 }
@@ -92,7 +96,7 @@ td {
 
 .hidden {
 	visibility: hidden;
-	height: 50px !important;
+	height: 20px !important;
 }
 
 .canvas {
@@ -203,6 +207,7 @@ ul {
 .overlayThing {
 	z-index: 10000;
 	pointer-events:auto;
+	font-family: "fonts/cabin.ttf", monospace;
 }
 
 .sideLayers {

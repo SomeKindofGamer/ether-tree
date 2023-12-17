@@ -158,13 +158,16 @@ function loadVue() {
 		props: ['layer', 'data'],
 		template: `
 		<div v-if="tmp[layer].upgrades" class="upgTable">
-			<div v-for="row in (data === undefined ? tmp[layer].upgrades.rows : data)" class="upgRow">
-				<div v-for="col in tmp[layer].upgrades.cols"><div v-if="tmp[layer].upgrades[row*10+col]!== undefined && tmp[layer].upgrades[row*10+col].unlocked" class="upgAlign">
-					<upgrade :layer = "layer" :data = "row*10+col" v-bind:style="tmp[layer].componentStyles.upgrade"></upgrade>
-				</div></div>
-			</div>
-			<br>
-		</div>
+    <div v-for="row in (data === undefined ? tmp[layer].upgrades.rows : data)" class="upgRow">
+        <div v-for="col in tmp[layer].upgrades.cols">
+            <div v-if="tmp[layer].upgrades[row*10+col]!== undefined && tmp[layer].upgrades[row*10+col].unlocked" class="upgAlign with-margin">
+                <upgrade :layer="layer" :data="row*10+col" v-bind:style="tmp[layer].componentStyles.upgrade"></upgrade>
+            </div>
+        </div>
+    </div>
+    <br>
+</div>
+
 		`
 	})
 
@@ -205,14 +208,31 @@ function loadVue() {
 	Vue.component('milestone', {
 		props: ['layer', 'data'],
 		template: `
-		<td v-if="tmp[layer].milestones && tmp[layer].milestones[data]!== undefined && milestoneShown(layer, data) && tmp[layer].milestones[data].unlocked" v-bind:style="[tmp[layer].milestones[data].style]" v-bind:class="{milestone: !hasMilestone(layer, data), tooltipBox: true, milestoneDone: hasMilestone(layer, data)}">
-			<h3 v-html="tmp[layer].milestones[data].requirementDescription"></h3><br>
-			<span v-html="run(layers[layer].milestones[data].effectDescription, layers[layer].milestones[data])"></span><br>
-			<tooltip v-if="tmp[layer].milestones[data].tooltip" :text="tmp[layer].milestones[data].tooltip"></tooltip>
-
-		<span v-if="(tmp[layer].milestones[data].toggles)&&(hasMilestone(layer, data))" v-for="toggle in tmp[layer].milestones[data].toggles"><toggle :layer= "layer" :data= "toggle" v-bind:style="tmp[layer].componentStyles.toggle"></toggle>&nbsp;</span></td></tr>
-		`
-	})
+			<td v-if="tmp[layer].milestones && tmp[layer].milestones[data]!== undefined && milestoneShown(layer, data) && tmp[layer].milestones[data].unlocked"
+				v-bind:style="[
+					tmp[layer].milestones[data].style,
+					{
+						'text-align': 'left',
+						'background': hasMilestone(layer, data) ? 'linear-gradient(to right, #77bf5f, #558f42)' : 'linear-gradient(to right, #858585, #4f4f4f)'
+					}
+				]"
+				v-bind:class="{milestone: !hasMilestone(layer, data), tooltipBox: true, milestoneDone: hasMilestone(layer, data)}">
+				<h3 v-html="tmp[layer].milestones[data].requirementDescription"></h3><br>
+				<span v-html="run(layers[layer].milestones[data].effectDescription, layers[layer].milestones[data])"></span><br>
+				<tooltip v-if="tmp[layer].milestones[data].tooltip" :text="tmp[layer].milestones[data].tooltip"></tooltip>
+	
+				<span v-if="(tmp[layer].milestones[data].toggles)&&(hasMilestone(layer, data))"
+					  v-for="toggle in tmp[layer].milestones[data].toggles">
+					<toggle :layer="layer" :data="toggle" v-bind:style="tmp[layer].componentStyles.toggle"></toggle>&nbsp;
+				</span>
+			</td>
+		`,
+	});
+	
+	
+	
+	
+	
 
 	Vue.component('toggle', {
 		props: ['layer', 'data'],
@@ -224,19 +244,37 @@ function loadVue() {
 	Vue.component('prestige-button', {
 		props: ['layer', 'data'],
 		template: `
-		<button v-if="(tmp[layer].type !== 'none')" v-bind:class="{ [layer]: true, reset: true, locked: !tmp[layer].canReset, can: tmp[layer].canReset}"
-			v-bind:style="[tmp[layer].canReset ? {'background-color': tmp[layer].color} : {}, tmp[layer].componentStyles['prestige-button']]"
-			v-html="prestigeButtonText(layer)" v-on:click="doReset(layer)">
-		</button>
-		`
+			<button v-if="(tmp[layer].type !== 'none')" 
+				v-bind:class="{ [layer]: true, reset: true, locked: !tmp[layer].canReset, can: tmp[layer].canReset}"
+				v-bind:style="[
+					tmp[layer].canReset ? {
+						'background': 'linear-gradient(#2e2d2d, #333333)' // Gradient from #4f4f4f to #2e2d2d, top to bottom
+					} : {},
+					tmp[layer].componentStyles['prestige-button']
+				]"
+				v-html="prestigeButtonText(layer)" 
+				v-on:click="doReset(layer)">
+			</button>
+		`,
+	});
 	
-	})
+	
 
 	// Displays the main resource for the layer
 	Vue.component('main-display', {
 		props: ['layer', 'data'],
 		template: `
 		<div><span v-if="player[layer].points.lt('1e1000')">You have </span><h2 v-bind:style="{'color': tmp[layer].color, 'text-shadow': '0px 0px 10px ' + tmp[layer].color}">{{data ? format(player[layer].points, data) : formatWhole(player[layer].points)}}</h2> {{tmp[layer].resource}}<span v-if="layers[layer].effectDescription">, <span v-html="run(layers[layer].effectDescription, layers[layer])"></span></span><br><br></div>
+		`
+	})
+
+	Vue.component('main-display2', {
+		props: ['layer', 'data'],
+		template: `
+		<div>
+		<span v-if="player[layer].points.lt('1e1000')">You have </span><h2 v-bind:style="{'color': tmp[layer].color, 'text-shadow': '0px 0px 10px ' + tmp[layer].color}">{{data ? format(player[layer].points, data) : formatWhole(player[layer].points)}}</h2> {{tmp[layer].resource}}<span v-if="layers[layer].effectDescription">, <span v-html="run(layers[layer].effectDescription, layers[layer])"></span></span><br><br>
+		<span v-if="tmp[layer].passiveGeneration"><br>You are gaining {{format(tmp[layer].resetGain.times(tmp[layer].passiveGeneration))}} {{tmp[layer].resource}} per second</span>
+		</div>
 		`
 	})
 
@@ -470,7 +508,7 @@ function loadVue() {
 		template: `
 		<div v-if="tmp[layer].achievements" class="upgTable">
 			<div v-for="row in (data === undefined ? tmp[layer].achievements.rows : data)" class="upgRow">
-				<div v-for="col in tmp[layer].achievements.cols"><div v-if="tmp[layer].achievements[row*10+col]!== undefined && tmp[layer].achievements[row*10+col].unlocked" class="upgAlign">
+				<div v-for="col in tmp[layer].achievements.cols"><div v-if="tmp[layer].achievements[row*10+col]!== undefined && tmp[layer].achievements[row*10+col].unlocked" class="upgAlign with-margin">
 					<achievement :layer = "layer" :data = "row*10+col" v-bind:style="tmp[layer].componentStyles.achievement"></achievement>
 				</div></div>
 			</div>
@@ -483,16 +521,20 @@ function loadVue() {
 	Vue.component('achievement', {
 		props: ['layer', 'data'],
 		template: `
-		<div v-if="tmp[layer].achievements && tmp[layer].achievements[data]!== undefined && tmp[layer].achievements[data].unlocked" v-bind:class="{ [layer]: true, achievement: true, tooltipBox:true, locked: !hasAchievement(layer, data), bought: hasAchievement(layer, data)}"
-			v-bind:style="achievementStyle(layer, data)">
-			<tooltip :text="
-			(tmp[layer].achievements[data].tooltip == '') ? false : hasAchievement(layer, data) ? (tmp[layer].achievements[data].doneTooltip ? tmp[layer].achievements[data].doneTooltip : (tmp[layer].achievements[data].tooltip ? tmp[layer].achievements[data].tooltip : 'You did it!'))
-			: (tmp[layer].achievements[data].goalTooltip ? tmp[layer].achievements[data].goalTooltip : (tmp[layer].achievements[data].tooltip ? tmp[layer].achievements[data].tooltip : 'LOCKED'))
-		"></tooltip>
-			<span v-if= "tmp[layer].achievements[data].name"><br><h3 v-bind:style="tmp[layer].achievements[data].textStyle" v-html="tmp[layer].achievements[data].name"></h3><br></span>
-		</div>
-		`
-	})
+			<div class="achievement-wrapper">
+				<div v-if="tmp[layer].achievements && tmp[layer].achievements[data]!== undefined && tmp[layer].achievements[data].unlocked"
+					v-bind:class="{ [layer]: true, achievement: true, tooltipBox:true, locked: !hasAchievement(layer, data), bought: hasAchievement(layer, data)}"
+					v-bind:style="achievementStyle(layer, data)">
+					<tooltip :text="
+						(tmp[layer].achievements[data].tooltip == '') ? false : hasAchievement(layer, data) ? (tmp[layer].achievements[data].doneTooltip ? tmp[layer].achievements[data].doneTooltip : (tmp[layer].achievements[data].tooltip ? tmp[layer].achievements[data].tooltip : 'You did it!'))
+						: (tmp[layer].achievements[data].goalTooltip ? tmp[layer].achievements[data].goalTooltip : (tmp[layer].achievements[data].tooltip ? tmp[layer].achievements[data].tooltip : 'LOCKED'))
+					"></tooltip>
+					<span v-if="tmp[layer].achievements[data].name"><br><h3 v-bind:style="tmp[layer].achievements[data].textStyle" v-html="tmp[layer].achievements[data].name"></h3><br></span>
+				</div>
+			</div>
+		`,
+	});
+	
 
 	// Data is an array with the structure of the tree
 	Vue.component('tree', {
@@ -505,7 +547,7 @@ function loadVue() {
 			<span v-for="(node, id) in row" style = "{width: 0px}">
 				<tree-node :layer='node' :prev='layer' :abb='tmp[node].symbol' :key="key + '-' + r + '-' + id"></tree-node>
 			</span>
-			<tr><table><button class="treeNode hidden"></button></table></tr>
+			<tr><table><button class="treeMeow hidden"></button></table></tr>
 		</span></div>
 
 	`
@@ -548,7 +590,7 @@ function loadVue() {
 			<span v-for="id in row" style = "{width: 0px; height: 0px;}" v-if="tmp[layer][type+'s'][id]!== undefined && tmp[layer][type+'s'][id].unlocked" class="upgAlign">
 				<div v-bind:is="type" :layer = "layer" :data = "id" v-bind:style="tmp[layer].componentStyles[type]" class = "treeThing"></div>
 			</span>
-			<tr><table><button class="treeNode hidden"></button></table></tr>
+			<tr><table><button class="treeMeow hidden"></button></table></tr>
 		</span></div>
 	`
 	})

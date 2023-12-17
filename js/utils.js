@@ -30,11 +30,17 @@ function prestigeButtonText(layer)
 	if(tmp[layer].type == "normal") {
 		if (tmp.nerdMode) return "Gain Formula: "+gainFormulaNormal(layer);
 		else return `${ player[layer].points.lt(1e3) ? (tmp[layer].resetDescription !== undefined ? tmp[layer].resetDescription : "Reset for ") : ""}+<b>${formatWhole(tmp[layer].resetGain)}</b> ${tmp[layer].resource} ${tmp[layer].resetGain.lt(100) && player[layer].points.lt(1e3) ? `<br><br>Next at ${ (tmp[layer].roundUpCost ? formatWhole(tmp[layer].nextAt) : format(tmp[layer].nextAt))} ${ tmp[layer].baseResource }` : ""}`
-	} else if(tmp[layer].type== "static") {
+	} 
+	else if(tmp[layer].type== "static") {
 		if (tmp.nerdMode) return "Cost Formula: "+costFormulaStatic(layer);
 		else return `${tmp[layer].resetDescription !== undefined ? tmp[layer].resetDescription : "Reset for "}+<b>${formatWhole(tmp[layer].resetGain)}</b> ${tmp[layer].resource}<br><br>${player[layer].points.lt(30) ? (tmp[layer].baseAmount.gte(tmp[layer].nextAt)&&(tmp[layer].canBuyMax !== undefined) && tmp[layer].canBuyMax?"Next:":"Req:") : ""} ${formatWhole(tmp[layer].baseAmount)} / ${(tmp[layer].roundUpCost ? formatWhole(tmp[layer].nextAtDisp) : format(tmp[layer].nextAtDisp))} ${ tmp[layer].baseResource }		
 		`
-	} else if(tmp[layer].type == "none")
+	} 
+	else if(tmp[layer].type == "shadow") {
+		if (tmp.nerdMode) return "Gain Formula: "+gainFormulaNormal(layer);
+		else return `<MA style='font-family: url(\"fonts/cabin.ttf\")'> Sacrifice your ether for ${ player[layer].points.lt(1e3) ? (tmp[layer].resetDescription !== undefined ? tmp[layer].resetDescription : "Reset for ") : ""}<b>${formatWhole(tmp[layer].resetGain)}</b> ${tmp[layer].resource} ${tmp[layer].resetGain.lt(1e333) && player[layer].points.lt(1e333) ? `<br><br>Next at ${ (tmp[layer].roundUpCost ? formatWhole(tmp[layer].nextAt) : format(tmp[layer].nextAt))} ${ tmp[layer].baseResource }` : ""}`
+	} 
+	else if(tmp[layer].type == "none")
 		return ""
 	else
 		return layers[layer].prestigeButtonText()

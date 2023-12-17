@@ -1,13 +1,30 @@
 /* Tree nodes, button nodes, and side layers */
 .treeNode {
-	height: 100px;
+	height: 80px;
 	width: 100px;
 	border: var(--hqProperty1);
-	border-color: rgba(0, 0, 0, 0.125);
-	border-radius: 50%;
+	border: 3px solid;
+	border-color: rgba(0, 0, 0, 0.2);
+	border-radius: 10%;
 	box-shadow: var(--hqProperty2a), var(--hqProperty2b);
 	font-size: 40px;
-	font-family: "Lucida Console", "Courier New", monospace;
+	font-family: "fonts/cabin.ttf", monospace;
+	color: rgba(0, 0, 0, 0.5);
+	text-shadow: var(--hqProperty3);
+	padding: 0;
+	margin: 0 10px 0 10px;
+}
+
+.treeMeow {
+	height: 50px;
+	width: 100px;
+	border: var(--hqProperty1);
+	border: 3px solid;
+	border-color: rgba(0, 0, 0, 0.2);
+	border-radius: 10%;
+	box-shadow: var(--hqProperty2a), var(--hqProperty2b);
+	font-size: 40px;
+	font-family: "fonts/cabin.ttf", monospace;
 	color: rgba(0, 0, 0, 0.5);
 	text-shadow: var(--hqProperty3);
 	padding: 0;
@@ -16,7 +33,7 @@
 
 .nodeLabel {
 	font: inherit;
-	font-family: inherit;
+	font-family: "fonts/cabin.ttf", monospace;
 }
 
 .treeButton {
@@ -24,10 +41,10 @@
 	width: 100px;
 	border: var(--hqProperty1);
 	border-color: rgba(0, 0, 0, 0.125);
-	border-radius: 33%;
+	border-radius: 15%;
 	box-shadow: var(--hqProperty2a), var(--hqProperty2b);
 	font-size: 40px;
-	font-family: "Lucida Console", "Courier New", monospace;
+	font-family: "fonts/cabin.ttf", monospace;
 	color: rgba(0, 0, 0, 0.5);
 	text-shadow: var(--hqProperty3);
 	padding: 0;
@@ -44,7 +61,7 @@
 }
 
 .treeNode.can:hover {
-	transform: scale(1.15, 1.15);
+	transform: scale(1.1, 1.1);
 	box-shadow: var(--hqProperty2a), 0 0 20px var(--points);
 }
 
