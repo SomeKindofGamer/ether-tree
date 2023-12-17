@@ -28,6 +28,7 @@ addLayer("main", {
         if (hasMilestone('shadow', 2)) mult = mult.mul(20)
         if (hasMilestone('shadow', 3)) mult = mult.pow(1.5)
         if (hasMilestone('shadow', 4)) mult = mult.mul(35)
+        if (hasUpgrade('shadow', 15)) mult = mult.mul(300)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -125,15 +126,6 @@ addLayer("main", {
             if (hasMilestone('shadow', 1)) return true
           }
         },
-
-        23: {
-          title: "Power Generator",
-          description: "Generate 1 power per second",
-          cost: new Decimal("1e1635"),
-          unlocked() {
-            if (hasMilestone('shadow', 4)) return true
-          }
-        },
       },
 
       buyables: {
@@ -212,7 +204,7 @@ addLayer("main", {
     layerShown(){return true},
 
     tabFormat: {
-      "Ether Upgrades": {
+      "Upgrades": {
         content:
         ["main-display",
         "resource-display",
@@ -220,7 +212,7 @@ addLayer("main", {
         "upgrades",]
   
       },
-      "Ether Buyables": {
+      "Buyables": {
         content:
         ["main-display",
         "resource-display",
@@ -247,11 +239,122 @@ addLayer("shadow", {
   baseAmount() {return player.main.points}, // Get the current amount of baseResource
   type: "shadow", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
   exponent: 0.0015, // Prestige currency exponent
+
+  gainExp() { // Calculate the exponent on main currency from bonuses
+    let Generation = new Decimal(1)
+    if (hasUpgrade('shadow', 14)) Generation = Generation.add(0.03)
+    return Generation
+  },
+
   gainMult() { // Calculate the multiplier for main currency from bonuses
       mult = new Decimal(1)
       if (hasUpgrade('main', 22)) mult = mult.mul(2)
       if (hasMilestone('shadow', 3)) mult = mult.mul(2)
+      if (hasUpgrade('shadow', 11)) mult = mult.mul(2)
+      if (hasUpgrade('shadow', 12)) mult = mult.mul(2)
+      if (hasUpgrade('shadow', 13)) mult = mult.mul(3)
+      if (hasUpgrade('shadow', 21)) mult = mult.mul(4)
+      if (hasUpgrade('shadow', 22)) mult = mult.pow(1.02)
+      if (hasUpgrade('shadow', 23)) mult = mult.pow(1.05)
+      if (hasUpgrade('shadow', 24)) mult = mult.pow(1.075)
+      if (hasMilestone('energy', 0)) mult = mult.mul(1.5)
+      if (hasMilestone('energy', 1)) mult = mult.mul(1.5)
+      if (hasMilestone('energy', 3)) mult = mult.mul(2)
       return mult
+  },
+
+  upgrades: {
+
+    11: {
+        title: "Shadow Multiplier",
+        description: "Double your shadow gain",
+        cost: new Decimal(1000),
+        unlocked() {
+          if (hasMilestone('shadow', 4)) return true
+        }
+    },
+
+    12: {
+      title: "Shadow Multiplier II",
+      description: "Double your shadow gain again",
+      cost: new Decimal(2500),
+      unlocked() {
+        if (hasMilestone('shadow', 4)) return true
+      }
+    },
+
+    13: {
+      title: "Shadow Multiplier III",
+      description: "Triple your shadow gain",
+      cost: new Decimal(5000),
+      unlocked() {
+        if (hasMilestone('shadow', 4)) return true
+      }
+    },
+
+    14: {
+      title: "Sacrifice Duper",
+      description: "/1.2 Sacrifice Cost",
+      cost: new Decimal(10000),
+      unlocked() {
+        if (hasMilestone('shadow', 4)) return true
+      }
+    },
+
+    15: {
+      title: "Shadow Ether Generator",
+      description: "x300 Ether Gain",
+      cost: new Decimal(15000),
+      unlocked() {
+        if (hasMilestone('shadow', 4)) return true
+      }
+    },
+
+    21: {
+      title: "Shadow Multiplier IV",
+      description: "Quadruple your Shadow Gain",
+      cost: new Decimal(25000),
+      unlocked() {
+        if (hasMilestone('shadow', 4)) return true
+      }
+    },
+    
+    22: {
+      title: "Shadow Spawner",
+      description: "^1.02 your Shadow Gain",
+      cost: new Decimal(32000),
+      unlocked() {
+        if (hasMilestone('shadow', 4)) return true
+      }
+    },
+
+    23: {
+      title: "Shadow Spawner II",
+      description: "^1.05 your Shadow Gain",
+      cost: new Decimal(50000),
+      unlocked() {
+        if (hasMilestone('shadow', 4)) return true
+      }
+    },
+
+    24: {
+      title: "Shadow Spawner III",
+      description: "^1.075 your Shadow Gain",
+      cost: new Decimal(75000),
+      unlocked() {
+        if (hasMilestone('shadow', 4)) return true
+      }
+    },
+
+    31: {
+      title: "Energy Converter",
+      description: "Unlock shadow energy",
+      cost: new Decimal(100000),
+      unlocked() {
+        if (hasMilestone('shadow', 4)) return true
+      }
+    },
+
   },
 
   milestones: {
@@ -289,19 +392,11 @@ addLayer("shadow", {
 
     4: {
       requirementDescription: "Get 5,000 shadows",
-      effectDescription: "x35 ether gain and unlock a new layer",
+      effectDescription: "x35 ether gain and unlock shadow upgrades",
       done() {
         return player.shadow.points.gte(5000)
       }
-    },
-
-    5: {
-      requirementDescription: "Get 500,000 shadows",
-      effectDescription: "unlocks something (not added yet)",
-      done() {
-        return player.shadow.points.gte(500000)
-      }
-    },
+    }
     
   },
 
@@ -316,75 +411,97 @@ addLayer("shadow", {
       "prestige-button",
       "blank", 
       "milestones", 
-      "blank", 
-      "upgrades",]
+    ]
+    },
 
+    "Upgrades": {
+      content:
+      ["main-display",
+      "resource-display",
+      "blank", 
+      "upgrades", 
+    ]
     }
   }
 
 })
 
-addLayer("pwr", {
+addLayer("energy", {
   name: "", // This is optional, only used in a few places, If absent it just uses the layer id.
-  symbol: "PWR", // This appears on the layer's node. Default is the id with the first letter capitalized
+  symbol: "S-E", // This appears on the layer's node. Default is the id with the first letter capitalized
   position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
   startData() { return {
-    unlocked: false,
-    points: new Decimal(0), // Currency
-  }},
+      unlocked: false,
+  points: new Decimal(0), // Currency
 
-  color: "#FFF554",
-  requires: new Decimal("1e1635"), // Can be a function that takes requirement increases into account
-  resource: "power", // Name of prestige currency
-  baseResource: "ether", // Name of resource prestige is based on
-  baseAmount() {return player.main.points}, // Get the current amount of baseResource
+  }},
+  color: "#34381b",
+  requires: new Decimal(1), // Can be a function that takes requirement increases into account
+  resource: "shadow energy", // Name of prestige currency
+  baseResource: "shadow", // Name of resource prestige is based on
+  baseAmount() {return player.shadow.points}, // Get the current amount of baseResource
   type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-  exponent: 0, // Prestige currency exponent
+  exponent: 0.2, // Prestige currency exponent
 
   gainExp() { // Calculate the exponent on main currency from bonuses
     let Generation = new Decimal(1)
     return Generation
   },
 
-  passiveGeneration() { // Calculate the multiplier for main currency from bonuses
-      mult = new Decimal(0)
-      if (hasUpgrade('main', 23)) mult = mult.add(1)
-      if (hasUpgrade('pwr', 11)) mult = mult.mul(2)
-      if (hasUpgrade('pwr', 12)) mult = mult.mul(2)
-      if (hasUpgrade('pwr', 13)) mult = mult.mul(3)
+  gainMult() { // Calculate the multiplier for main currency from bonuses
+      mult = new Decimal(1)
+      if (hasMilestone('energy', 2)) mult = mult.mul(1.5)
+      if (hasMilestone('energy', 3)) mult = mult.mul(1.5)
       return mult
   },
 
   row: 2, // Row the layer is in on the tree (0 is the first row)
-  layerShown(){return hasMilestone('shadow', 4)},
+  layerShown(){return hasUpgrade('shadow', 31)},
 
-  upgrades: {
-    11: {
-        title: "Power Generator",
-        description: "Double your power gain.",
-        cost: new Decimal(1),
+  milestones: {
+    0: {
+      requirementDescription: "Get 1 shadow energy",
+      effectDescription: "x1.5 shadow gain",
+      done() {
+        return player.energy.points.gte(1)
+      }
     },
 
-    12: {
-      title: "Power Generator II",
-      description: "Double your power gain.",
-      cost: new Decimal(100),
+    1: {
+      requirementDescription: "Get 10 shadow energies",
+      effectDescription: "x1.5 shadow gain",
+      done() {
+        return player.energy.points.gte(10)
+      }
     },
 
-    13: {
-      title: "Power Generator III",
-      description: "Triple your power gain.",
-      cost: new Decimal(12500),
+    2: {
+      requirementDescription: "Get 50 shadow energies",
+      effectDescription: "x1.5 shadow energy gain",
+      done() {
+        return player.energy.points.gte(50)
+      }
     },
+
+    3: {
+      requirementDescription: "Get 200 shadow energies",
+      effectDescription: "x1.5 shadow energy gain and x2 shadow gain",
+      done() {
+        return player.energy.points.gte(200)
+      }
+    },
+    
   },
 
   tabFormat: {
-    "Power": {
+    "Energy": {
       content:
-      ["main-display2",
-      "blank",
-      "upgrades"]
-
+      ["main-display",
+      "resource-display",
+      "prestige-button",
+      "blank", 
+      "milestones", 
+    ]
     }
   }
 
@@ -686,7 +803,7 @@ points: new Decimal(0),
 },
 
 //      --------      Power Achievements      --------      \\
-
+/*
 ["P1"]: {
   name: "wow power!",
   done() {return player.pwr.points.gte(1)},
@@ -722,7 +839,7 @@ points: new Decimal(0),
   onComplete() {player.a.points = player.a.points.add(1)}
 },
 
-
+*/
 
 
   },
@@ -749,12 +866,13 @@ points: new Decimal(0),
        "blank",
        "blank",
 
-       
+       /*
        ["display-text", function() { return "~ Power Achievements ~"}],
     "blank",
        ["row", [["achievement", "P1"], ["achievement", "P2"], ["achievement", "P3"], ["achievement", "P4"], ["achievement", "P5"]]],
        "blank",
-       "blank",
+       "blank", 
+       */
 ],
 layerShown(){return true}
 })
