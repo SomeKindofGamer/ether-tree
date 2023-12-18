@@ -21,19 +21,32 @@ addLayer("main", {
         if (hasUpgrade('main', 13)) mult = mult.pow(1.1)
         if (hasUpgrade('main', 14)) mult = mult.pow(1.25)
         if (hasUpgrade('main', 15)) mult = mult.pow(1.4)
-        if (hasUpgrade('main', 18)) mult = mult.pow(1.65)
-        if (hasUpgrade('main', 19)) mult = mult.pow(1.85)
+        if (hasUpgrade('main', 23)) mult = mult.pow(1.65)
+        if (hasUpgrade('main', 24)) mult = mult.pow(1.85)
         if (hasMilestone('shadow', 0)) mult = mult.mul(10)
         if (hasMilestone('shadow', 1)) mult = mult.pow(1.4)
         if (hasMilestone('shadow', 2)) mult = mult.mul(20)
         if (hasMilestone('shadow', 3)) mult = mult.pow(1.8)
         if (hasMilestone('shadow', 4)) mult = mult.mul(35)
         if (hasUpgrade('shadow', 15)) mult = mult.mul(300)
+        if (hasUpgrade('shadow', 33)) mult = mult.pow(2)
+        if (hasUpgrade('shadow', 41)) {
+          mult = mult.pow(0.1)
+        }
+        if (hasMilestone('seth', 1)) mult = mult.mul(player.seth.points + 1)
+        if (hasMilestone('seth', 2)) mult = mult.pow(0.01)
+        if (hasMilestone('seth', 3)) mult = mult.mul(20)
+        if (hasMilestone('seth', 6)) mult = mult.mul(50)
+        if (hasMilestone('seth', 7)) mult = mult.mul(200)
+        if (hasMilestone('seth', 10)) mult = mult.mul(2500)
+        if (hasMilestone('seth', 13)) mult = mult.pow(2)
+        if (hasMilestone('seth', 14)) mult = mult.pow(2)
+
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
       let Generation = new Decimal(1)
-      
+      if (hasMilestone('seth', 2)) Generation = Generation.div(1.5)
       return Generation
     },
     passiveGeneration() {
@@ -82,25 +95,25 @@ addLayer("main", {
           cost: new Decimal(1e12),
         },
 
-        16: {
+        21: {
           title: "Point Generator v2",
           description: "Add ^0.2 to your Point gain",
           cost: new Decimal(1e100),
         },
 
-        17: {
+        22: {
           title: "MORE BUYABLES!!!",
           description: "Adds 200 to the buyable limit (1000)",
           cost: new Decimal(1e250),
         },
 
-        18: {
+        23: {
           title: "Ether Generator v5",
           description: "Add ^0.65 to your Ether gain",
           cost: new Decimal(1e295),
         },
 
-        19: {
+        24: {
           title: "Ether Generator MKII",
           description: "Add ^0.85 to your Ether gain",
           cost: new Decimal("1e600"),
@@ -109,7 +122,7 @@ addLayer("main", {
           }
         },
 
-        21: {
+        31: {
           title: "EVEN MORE BUYABLES!!!",
           description: "Adds 250 to the buyable limit (1250)",
           cost: new Decimal("1e775"),
@@ -118,7 +131,7 @@ addLayer("main", {
           }
         },
 
-        22: {
+        32: {
           title: "Darkness Lightraiser",
           description: "Earn 2x more shadow",
           cost: new Decimal("1e850"),
@@ -143,8 +156,8 @@ addLayer("main", {
       },
       purchaseLimit() {
         let LimitThing = new Decimal(800)
-        if (hasUpgrade('main', 17)) LimitThing = LimitThing.add(200)
-        if (hasUpgrade('main', 21)) LimitThing = LimitThing.add(250)
+        if (hasUpgrade('main', 22)) LimitThing = LimitThing.add(200)
+        if (hasUpgrade('main', 31)) LimitThing = LimitThing.add(250)
         return LimitThing
       },
       canAfford() {
@@ -166,6 +179,7 @@ addLayer("main", {
     12 : {
       cost(x) {
         let PowerI = new Decimal(2.35)
+        if (hasMilestone('seth', 11)) PowerI = PowerI.div(1.5)
         let Calculation = new Decimal(25).mul(Decimal.pow(PowerI, x.pow(1)))
         return Calculation;
       },
@@ -179,8 +193,9 @@ addLayer("main", {
       },
       purchaseLimit() {
         let LimitThing = new Decimal(800)
-        if (hasUpgrade('main', 17)) LimitThing = LimitThing.add(200)
-        if (hasUpgrade('main', 21)) LimitThing = LimitThing.add(250)
+        if (hasUpgrade('main', 22)) LimitThing = LimitThing.add(200)
+        if (hasUpgrade('main', 31)) LimitThing = LimitThing.add(250)
+        if (hasMilestone('seth', 12)) LimitThing = LimitThing.add(500)
         return LimitThing
       },
       buy() {
@@ -189,6 +204,8 @@ addLayer("main", {
       },
       effect(x) {
         let Effect = new Decimal(1).mul(Decimal.pow(1.25, x.pow(1)))
+        if (hasMilestone('seth', 11)) Effect = Effect.pow(60)
+        if (hasMilestone('seth', 11)) Effect = Effect.mul(300)
         return Effect;
       },
       unlocked() {
@@ -239,7 +256,6 @@ addLayer("shadow", {
   baseAmount() {return player.main.points}, // Get the current amount of baseResource
   type: "shadow", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
   exponent: 0.0015, // Prestige currency exponent
-
   gainExp() { // Calculate the exponent on main currency from bonuses
     let Generation = new Decimal(1)
     if (hasUpgrade('shadow', 14)) Generation = Generation.add(0.03)
@@ -248,7 +264,7 @@ addLayer("shadow", {
 
   gainMult() { // Calculate the multiplier for main currency from bonuses
       mult = new Decimal(1)
-      if (hasUpgrade('main', 22)) mult = mult.mul(2)
+      if (hasUpgrade('main', 32)) mult = mult.mul(2)
       if (hasMilestone('shadow', 3)) mult = mult.mul(2)
       if (hasUpgrade('shadow', 11)) mult = mult.mul(2)
       if (hasUpgrade('shadow', 12)) mult = mult.mul(2)
@@ -260,6 +276,12 @@ addLayer("shadow", {
       if (hasMilestone('energy', 0)) mult = mult.mul(1.5)
       if (hasMilestone('energy', 1)) mult = mult.mul(1.5)
       if (hasMilestone('energy', 3)) mult = mult.mul(2)
+
+      if (hasUpgrade('shadow', 41)) {
+  
+        document.body.style.setProperty('--background', "#1f0f0f");
+      }
+      if (hasMilestone('seth', 14)) mult = mult.pow(2)
       return mult
   },
 
@@ -355,6 +377,38 @@ addLayer("shadow", {
       }
     },
 
+    32: {
+      title: "Energy Converter II",
+      description: "2x Shadow Energy Gain",
+      cost: new Decimal(250000),
+      unlocked() {
+        if (hasMilestone('energy', 1)) return true
+      }
+    },
+
+    33: {
+      title: "Ultimate Ether Generation",
+      description: "^2 Ether Generation",
+      cost: new Decimal(750000),
+      unlocked() {
+        if (hasMilestone('energy', 1)) return true
+      }
+    },
+
+    41: {
+      title: "hi",
+      description: "whats this...?",
+      cost: new Decimal(2e9),
+      onPurchase() {
+        this.title = "my finger slipped"
+        this.description = "no more ether muhahaha!!!",
+        doPopup(type = "none", text = "OH NO MY ETHER", title = "hehehe", timer = 3, color = "#5f0f0f")
+      },
+      unlocked() {
+        if (hasMilestone('energy', 1)) return true
+      }
+    },
+
   },
 
   milestones: {
@@ -426,6 +480,227 @@ addLayer("shadow", {
 
 })
 
+addLayer("seth", {
+  name: "", // This is optional, only used in a few places, If absent it just uses the layer id.
+  symbol: "S-ET", // This appears on the layer's node. Default is the id with the first letter capitalized
+  position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+  startData() { return {
+    unlocked: true,
+    points: new Decimal(0), // Currency
+
+  }},
+  color: "#301934",
+  requires: new Decimal(1000), // Can be a function that takes requirement increases into account
+  resource: "super", // Name of prestige currency
+  baseResource: "ether", // Name of resource prestige is based on
+  baseAmount() {return player.main.points}, // Get the current amount of baseResource
+  type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+  exponent: 0.1, // Prestige currency exponent
+  gainExp() { // Calculate the exponent on main currency from bonuses
+    let Generation = new Decimal(1)
+    Generation = Generation.div(player.seth.points + 1)
+    if (hasMilestone('seth', 2)) Generation = Generation.div(0.05)
+    if (hasMilestone('seth', 4)) Generation = Generation.div(1.5)
+    if (hasMilestone('seth', 5)) Generation = Generation.div(0.99)
+    if (hasMilestone('seth', 7)) Generation = Generation.div(2)
+    if (hasMilestone('seth', 9)) Generation = Generation.div(1.5)
+    if (hasMilestone('seth', 12)) Generation = Generation.div(5)
+    if (hasMilestone('seth', 14)) Generation = Generation.div(20)
+    return Generation
+  },
+
+  gainMult() { // Calculate the multiplier for main currency from bonuses
+      mult = new Decimal(1)
+      return mult
+  },
+
+  milestones: {
+    0: {
+      requirementDescription: "my stuff... (1)",
+      effectDescription: "what a shame",
+      done() {
+        return player.seth.points.gte(1)
+      },
+      unlocked() {
+        return player.seth.points.gte(1)
+      }
+    },
+
+    1: {
+      requirementDescription: "is there any point to this? (2)",
+      effectDescription: "boosts ether by super ether",
+      done() {
+        return player.seth.points.gte(2)
+      },
+      unlocked() {
+        return player.seth.points.gte(2)
+      }
+    },
+
+    2: {
+      requirementDescription: "no. (7)",
+      effectDescription: ":)",
+      onComplete() {
+        doPopup(type = "none", text = "was it getting too easy?", title = ":)", timer = 3, color = "#5f0f0f")
+      },
+      done() {
+        return player.seth.points.gte(7)
+      },
+      unlocked() {
+        return player.seth.points.gte(6)
+      }
+    },
+
+    3: {
+      requirementDescription: "ok thats enough hardness (8)",
+      effectDescription: "more ether yay",
+      done() {
+        return player.seth.points.gte(8)
+      },
+      unlocked() {
+        return player.seth.points.gte(8)
+      }
+    },
+
+    4: {
+      requirementDescription: "enjoying this? (10)",
+      effectDescription: "x5 Point Gain",
+      done() {
+        return player.seth.points.gte(10)
+      },
+      unlocked() {
+        return player.seth.points.gte(9)
+      }
+    },
+
+    5: {
+      requirementDescription: "its about time points got multiplied (11)",
+      effectDescription: "x20 Point Gain",
+      done() {
+        return player.seth.points.gte(11)
+      },
+      unlocked() {
+        return player.seth.points.gte(10)
+      }
+    },
+
+    6: {
+      requirementDescription: "having fun? (12)",
+      effectDescription: "x50 Ether Gain",
+      done() {
+        return player.seth.points.gte(12)
+      },
+      unlocked() {
+        return player.seth.points.gte(11)
+      }
+    },
+
+    7: {
+      requirementDescription: "mmm i love ether dont you? (14)",
+      effectDescription: "x50 Point Gain, 200x Ether Gain",
+      done() {
+        return player.seth.points.gte(14)
+      },
+      unlocked() {
+        return player.seth.points.gte(13)
+      }
+    },
+
+    8: {
+      requirementDescription: "we're being nice to points now (15)",
+      effectDescription: "^1.5 Point Gain",
+      done() {
+        return player.seth.points.gte(15)
+      },
+      unlocked() {
+        return player.seth.points.gte(15)
+      }
+    },
+
+    9: {
+      requirementDescription: "more point gain cause why not (18)",
+      effectDescription: "x25 Point Gain",
+      done() {
+        return player.seth.points.gte(18)
+      },
+      unlocked() {
+        return player.seth.points.gte(17)
+      }
+    },
+
+    10: {
+      requirementDescription: "congratulations you reached the end of super ether (19)",
+      effectDescription: "x2,500 Ether Gain",
+      done() {
+        return player.seth.points.gte(19)
+      },
+      unlocked() {
+        return player.seth.points.gte(18)
+      }
+    },
+
+    11: {
+      requirementDescription: "surprise super ether milestone!!! (22)",
+      effectDescription: "Etheral Token Buyable is now better",
+      done() {
+        return player.seth.points.gte(22)
+      },
+      unlocked() {
+        return player.seth.points.gte(22)
+      }
+    },
+
+    12: {
+      requirementDescription: "another surprise super ether milestone!!! (25)",
+      effectDescription: "Etheral Token Buyable has 500 more limit and does 300x more boost",
+      done() {
+        return player.seth.points.gte(25)
+      },
+      unlocked() {
+        return player.seth.points.gte(25)
+      }
+    },
+    
+    13: {
+      requirementDescription: "enjoying super ether? (26)",
+      effectDescription: "^2 ether gain",
+      done() {
+        return player.seth.points.gte(26)
+      },
+      unlocked() {
+        return player.seth.points.gte(26)
+      }
+    },
+
+    14: {
+      requirementDescription: "ok fr no more super ether (30)",
+      effectDescription: "^2 ether and shadow gain",
+      done() {
+        return player.seth.points.gte(30)
+      },
+      unlocked() {
+        return player.seth.points.gte(30)
+      }
+    },
+  },
+
+  row: 3, // Row the layer is in on the tree (0 is the first row)
+  layerShown(){return hasAchievement("a", "MY1")},
+
+  tabFormat: {
+    "Super Ether": {
+      content:
+      ["main-display",
+      "resource-display",
+      "prestige-button",
+      "blank", 
+      "milestones", 
+    ]
+    }
+  }
+
+})
+
 addLayer("energy", {
   name: "", // This is optional, only used in a few places, If absent it just uses the layer id.
   symbol: "S-E", // This appears on the layer's node. Default is the id with the first letter capitalized
@@ -452,6 +727,7 @@ addLayer("energy", {
       mult = new Decimal(1)
       if (hasMilestone('energy', 2)) mult = mult.mul(1.5)
       if (hasMilestone('energy', 3)) mult = mult.mul(1.5)
+      if (hasUpgrade('shadow', 33)) mult = mult.mul(2)
       return mult
   },
 
@@ -468,23 +744,23 @@ addLayer("energy", {
     },
 
     1: {
-      requirementDescription: "Get 10 shadow energies",
-      effectDescription: "x1.5 shadow gain",
+      requirementDescription: "Get 10 shadow energy",
+      effectDescription: "x1.5 Shadow Gain, Unlock 3 new shadow upgrades",
       done() {
         return player.energy.points.gte(10)
       }
     },
 
     2: {
-      requirementDescription: "Get 50 shadow energies",
-      effectDescription: "x1.5 shadow energy gain",
+      requirementDescription: "Get 50 shadow energy",
+      effectDescription: "x1.5 Shadow Energy Gain",
       done() {
         return player.energy.points.gte(50)
       }
     },
 
     3: {
-      requirementDescription: "Get 200 shadow energies",
+      requirementDescription: "Get 200 shadow energy",
       effectDescription: "x1.5 shadow energy gain and x2 shadow gain",
       done() {
         return player.energy.points.gte(200)
@@ -802,45 +1078,52 @@ points: new Decimal(0),
   onComplete() {player.a.points = player.a.points.add(1)}
 },
 
-//      --------      Power Achievements      --------      \\
-/*
-["P1"]: {
-  name: "wow power!",
-  done() {return player.pwr.points.gte(1)},
-  tooltip: "Get 1 Power", // Showed when the achievement is completed
+//      --------      Shadow Energy Achievements      --------      \\
+
+["SE1"]: {
+  name: "And we reset again...",
+  done() {return player.energy.points.gte(1)},
+  tooltip: "Get 1 Shadow Energy", // Showed when the achievement is completed
   onComplete() {player.a.points = player.a.points.add(1)}
 },
 
-["P2"]: {
-  name: "i love power!",
-  done() {return player.pwr.points.gte(100)},
-  tooltip: "Get 100 power", // Showed when the achievement is completed
+["SE2"]: {
+  name: "Starting off somewhere",
+  done() {return player.energy.points.gte(100)},
+  tooltip: "Get 100 Shadow Energy", // Showed when the achievement is completed
   onComplete() {player.a.points = player.a.points.add(1)}
 },
 
-["P3"]: {
-  name: "alot of power",
-  done() {return player.pwr.points.gte(10000)},
-  tooltip: "Get 10,000 power", // Showed when the achievement is completed
+["SE3"]: {
+  name: "alot of shadow energy",
+  done() {return player.energy.points.gte(10000)},
+  tooltip: "Get 10,000 Shadow Energy", // Showed when the achievement is completed
   onComplete() {player.a.points = player.a.points.add(1)}
 },
 
-["P4"]: {
-  name: "nvm power is boring",
-  done() {return player.pwr.points.gte(1000000)},
+["SE4"]: {
+  name: "nvm shadow energy is boring",
+  done() {return player.energy.points.gte(1000000)},
   tooltip: "Get 1,000,000 power", // Showed when the achievement is completed
   onComplete() {player.a.points = player.a.points.add(1)}
 },
 
-["P5"]: {
-  name: "i like power actually",
-  done() {return player.pwr.points.gte(1e9)},
+["SE5"]: {
+  name: "i like shadow energy actually",
+  done() {return player.energy.points.gte(1e9)},
   tooltip: "Get 1e9 power", // Showed when the achievement is completed
   onComplete() {player.a.points = player.a.points.add(1)}
 },
 
-*/
+//      --------      Mystery Achievements      --------      \\
 
+["MY1"]: {
+  name: "what have i done",
+  done() {return hasUpgrade('shadow', 41)},
+  tooltip: "oh well atleast u got super ether now", // Showed when the achievement is completed
+  unlocked() {return hasMilestone('seth', 1)},
+  onComplete() {player.a.points = player.a.points.add(1)}
+},
 
   },
 
@@ -865,14 +1148,19 @@ points: new Decimal(0),
        ["row", [["achievement", "S6"], ["achievement", "S7"], ["achievement", "S8"], ["achievement", "S9"], ["achievement", "S10"]]],
        "blank",
        "blank",
-
-       /*
-       ["display-text", function() { return "~ Power Achievements ~"}],
+       
+       ["display-text", function() { return "~ Shadow Energy Achievements ~"}],
     "blank",
-       ["row", [["achievement", "P1"], ["achievement", "P2"], ["achievement", "P3"], ["achievement", "P4"], ["achievement", "P5"]]],
+       ["row", [["achievement", "SE1"], ["achievement", "SE2"], ["achievement", "SE3"], ["achievement", "SE4"], ["achievement", "SE5"]]],
        "blank",
        "blank", 
-       */
+
+       ["display-text", function() { return "~ Mystery Achievements ~"}],
+       "blank",
+          ["row", [["achievement", "MY1"]]],
+          "blank",
+          "blank", 
+       
 ],
 layerShown(){return true}
 })
