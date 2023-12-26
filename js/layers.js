@@ -149,16 +149,17 @@ addLayer("main", {
         let Calculation = new Decimal(1).mul(Decimal.pow(PowerI, x.pow(1)))
         return Calculation;
       },
-      display() {
-        return `<b style="font-size:24px">Ether Point Generator v${format(player[this.layer].buyables[this.id], 0)}</b>
-    <h2>x${format(tmp[this.layer].buyables[this.id].effect)} Point Generation</h2><br>
-    <h1>Cost: ${format(tmp[this.layer].buyables[this.id].cost)} Ether</h1>`
-      },
       purchaseLimit() {
         let LimitThing = new Decimal(800)
         if (hasUpgrade('main', 22)) LimitThing = LimitThing.add(200)
         if (hasUpgrade('main', 31)) LimitThing = LimitThing.add(250)
         return LimitThing
+      },
+      display() {
+        return `<b style="font-size:24px">Point Generator v${format(player[this.layer].buyables[this.id], 0)}</b>
+    <h2>x${format(tmp[this.layer].buyables[this.id].effect)} Point Generation</h2><br>
+    <h1>Cost: ${format(tmp[this.layer].buyables[this.id].cost)} Ether</h1>
+    <h1><b style="font-size:15px">Max: ${format(this.purchaseLimit())}</h1>`
       },
       canAfford() {
         return player[this.layer].points.gte(this.cost())
@@ -184,9 +185,11 @@ addLayer("main", {
         return Calculation;
       },
       display() {
-        return `<b style="font-size:24px">Ethereal Token v${format(player[this.layer].buyables[this.id], 0)}</b>
+        return `<b style="font-size:24px">Ethereal Token v${format(player[this.layer].buyables[this.id], 0)} </b>
     <h2>x${format(tmp[this.layer].buyables[this.id].effect)} Ether Generation</h2><br>
-    <h1>Cost: ${format(tmp[this.layer].buyables[this.id].cost)} Ether</h1>`
+    <h1>Cost: ${format(tmp[this.layer].buyables[this.id].cost)} Ether</h1>
+    <h1><b style="font-size:15px">Max: ${format(this.purchaseLimit())}</h1>
+    `
       },
       canAfford() {
         return player[this.layer].points.gte(this.cost())
@@ -674,7 +677,7 @@ addLayer("seth", {
 
     14: {
       requirementDescription: "ok fr no more super ether (30)",
-      effectDescription: "^2 ether and shadow gain",
+      effectDescription: "^2 ether and ^2 shadow gain",
       done() {
         return player.seth.points.gte(30)
       },
