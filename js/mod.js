@@ -13,14 +13,17 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.0.0",
+	num: "1.0.1",
 	name: "Ethereal Tree",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.0</h3><br>
-		- Added things.<br>
-		- Added stuff.`
+	<h3>v1.0.1</h3><br>
+		- Super Ether 30 now unlocks some new upgrades!<br>
+		- 2 new shadow and shadow energy milestones <br>
+		- Added 5 new ether achievements and 1 new mystery achievement (ooo what a mystery!)<br>
+		- Fixed Shadow Energy achievement saying power.<br>
+		`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
